@@ -9,7 +9,7 @@
       mode: '777'
 # Second play
 - name: Play - for Alpines Nodejs app
-  hosts: alpine-example-com
+  hosts: alpine-example
   tasks:
   - name: NodeJs is installed
     apk:
@@ -38,17 +38,13 @@
       production: true
   - name: Install forever (to run Node.js app).
     npm: name=forever global=yes state=present
-  
   - name: Check list of Node.js apps running.
     command: forever list
     register: forever_list
     changed_when: false
-
   - name: Start example Node.js app.
     command: forever start /node-app/app.js
     when: "forever_list.stdout.find('/node-app/app.js') == -1"
-
-
 
 - name: Play - for RedHat based Hosts - Nginx
   hosts: redhat_group
@@ -57,7 +53,6 @@
     copy:
       src: nginx.repo
       dest: /etc/yum.repos.d/nginx.repo
-
   - name: nginx is installed
     yum:
       name: nginx
@@ -82,8 +77,9 @@
         <div style="display:flex;justify-content:center">
            <section>Served by:&nbsp;{{ inventory_hostname }}</section>
         </div>
+
 - name: Play - Alpine with Systemd or service - Apache webserver
-  hosts: alpinesystemd-example-com
+  hosts: alpinesystemd-example
   tasks:
   - name: apache is installed
     package:

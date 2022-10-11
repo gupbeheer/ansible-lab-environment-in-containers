@@ -6,6 +6,9 @@ services:
       context: control-node/
       args:
         ANSIBLE_VERSION: ${ANSIBLE_VERSION}
+        MOLECULE_VERSION: ${MOLECULE_VERSION}
+        YAMLLINT_VERSION: ${YAMLLINT_VERSION}
+        ANSIBLE_LINT_VERSION: ${ANSIBLE_LINT_VERSION}
     image: ansible:controlnode
     working_dir: /playbook
     user: 'root'
@@ -22,15 +25,13 @@ services:
     volumes:
       - ./secrets/id_rsa.pub:/root/.ssh/authorized_keys
     ports:
-      - 3001:3000
+      - 8084:3000
 #      - 2222:22
     environment:
       - SSH_ENABLE_ROOT=true
       # - SSH_USERS="admin:1000:1000"
-    deploy:
-      replicas: 3
   managedhost-redhat-base: &systemdbase
-    image: hello-world
+    image: hello-world+
     restart: 'no'
     tmpfs:
     - /run
@@ -45,7 +46,7 @@ services:
 
   managedhost-rhel8:
     <<: *systemdbase
-    container_name: rhel8-example-com
+    container_name: rhel8-example
     # build: managed-host/rhel8/
     image: abdennour/rhel:8-ssh
     restart: unless-stopped
@@ -55,13 +56,14 @@ services:
 
   managedhost-centos7:
     <<: *systemdbase
-    container_name: centos7-example-com
+    container_name: centos7-example
     image: centos/systemd
     restart: unless-stopped
     ports:
       - 8082:80 # playbook will run nginx
+      
   managedhost-alpine-systemd:
-    container_name: alpinesystemd-example-com
+    container_name: alpinesystemd-example
     build:
       context: managed-host/alpine/
       target: alpine-systemd
