@@ -31,7 +31,7 @@ services:
       - SSH_ENABLE_ROOT=true
       # - SSH_USERS="admin:1000:1000"
   managedhost-redhat-base: &systemdbase
-    image: hello-world+
+    image: hello-world
     restart: 'no'
     tmpfs:
     - /run
